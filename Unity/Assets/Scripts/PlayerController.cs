@@ -19,21 +19,39 @@ public class PlayerController : MonoBehaviour {
     public GameObject ShotR;
     public GameObject ShotL;
 
+    public GameObject cloneShotR;
+    public GameObject cloneShotL;
+
     public Transform SpawnR;
     public Transform SpawnL;
 
     public float fireRate;
     private float nextFire;
+    public float LongTimer = 3;
+    public float CloseTimer = 1;
+
+    public bool LongFired = false;
+    public bool CloseFired = false;
+
 
 
     void Start()
     {
         PlayerRB = GetComponent<Rigidbody>();
 
-        keywords.Add("Fire", () =>
+        keywords.Add("Far", () =>
         {
-            FireCalled();
+            FarFireCalled();
+            LongFired = true; 
         });
+
+
+        keywords.Add("Short", () =>
+        {
+            CloseFireCalled();
+            CloseFired = true;
+        });
+
 
         KeyWordRec = new KeywordRecognizer(keywords.Keys.ToArray());
         KeyWordRec.OnPhraseRecognized += KeywordRecognizerOnPhraseRecognized;
@@ -50,16 +68,63 @@ public class PlayerController : MonoBehaviour {
     }
 
 
-    void FireCalled()
+    public void FarFireCalled()
     {
         if (Time.time > nextFire)
         {
             nextFire = Time.time + fireRate;
-            Instantiate(ShotL, SpawnL.position, SpawnL.rotation);
-            Instantiate(ShotR, SpawnR.position, SpawnR.rotation);
+            cloneShotL =  (GameObject)Instantiate(ShotL, SpawnL.position, SpawnL.rotation);
+            cloneShotR = (GameObject)Instantiate(ShotR, SpawnR.position, SpawnR.rotation);
+           
         }
     }
 
+
+    public void CloseFireCalled()
+    {
+        if (Time.time > nextFire)
+        {
+            nextFire = Time.time + fireRate;
+            cloneShotL = (GameObject)Instantiate(ShotL, SpawnL.position, SpawnL.rotation);
+            cloneShotR = (GameObject)Instantiate(ShotR, SpawnR.position, SpawnR.rotation);
+
+        }
+    }
+
+
+
+    void Update()
+    {
+        transform.Translate(Vector3.forward * MovementSpeed * Time.deltaTime);
+        if(LongFired == true)
+        {
+
+            LongTimer -= Time.deltaTime;
+            if (LongTimer < 0)
+            {
+                Destroy(cloneShotL);
+                Destroy(cloneShotR);
+                LongTimer = 3;
+                LongFired = false;
+                
+            }
+        }
+
+        if (CloseFired == true)
+        {
+
+            CloseTimer -= Time.deltaTime;
+            if (CloseTimer < 0)
+            {
+                Destroy(cloneShotL);
+                Destroy(cloneShotR);
+                CloseTimer = 1;
+                CloseFired = false;
+
+            }
+        }
+
+    }
 
     void FixedUpdate()
     {
@@ -68,10 +133,7 @@ public class PlayerController : MonoBehaviour {
         MoveBat(h, v);
     }
 
-    void Update()
-    {
-        transform.Translate(Vector3.forward * MovementSpeed * Time.deltaTime);
-    }
+ 
 
     void MoveBat(float h, float v)
     {
