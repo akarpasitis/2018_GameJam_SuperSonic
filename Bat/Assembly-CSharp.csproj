@@ -54,6 +54,7 @@
      <Compile Include="Assets\Scripts\Microphone\MicInputVolume.cs" />
      <Compile Include="Assets\Scripts\Microphone\Recognition.cs" />
      <Compile Include="Assets\Scripts\Mover.cs" />
+     <Compile Include="Assets\Scripts\MusicPlayer.cs" />
      <Compile Include="Assets\Scripts\Other\AudioPier.cs" />
      <Compile Include="Assets\Scripts\Other\Instantiate512cubes.cs" />
      <Compile Include="Assets\Scripts\Other\PAramCube.cs" />
